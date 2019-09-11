@@ -6,12 +6,10 @@ class CustomCollectionView: UICollectionView {
     var minimumLineSpacing: CGFloat = 20
     var itemSize: CGSize { return CGSize(width: frame.height/centerCellScale, height: frame.height/centerCellScale) }
     var centerCellScale: CGFloat = 1.4
-    var tempTarget: Int = 0
     var selectedItem: Int = 0 {
         didSet{
             guard itemsQty > 0 else { return }
             let index = IndexPath(item: selectedItem, section: 0)
-//            self.selectItem(at: index, animated: true, scrollPosition: .centeredHorizontally)
             self.scrollToItem(at: index, at: .centeredHorizontally, animated: true)
             filterDelegate?.itemDidSelected(item: selectedItem)
         }
@@ -50,6 +48,12 @@ class CustomCollectionView: UICollectionView {
         selectedItem = 0
     }
     
+    //MARK: - for speed calculate
+    private var previousOffset: CGFloat = 0
+    private var previousTime: Int64 = Int64(Date.timeIntervalSinceReferenceDate*1000)
+    private var scrollSpeed: CGFloat = 0
+    private var isScrollHold: Bool = false
+    
 }
 
 private extension CustomCollectionView {
@@ -70,40 +74,41 @@ private extension CustomCollectionView {
 
 extension CustomCollectionView: UICollectionViewDelegate {
     
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        let target = calculateTarget()
-        selectedItem = target
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        isScrollHold = false
     }
-    
-//    func scrollViewWillBeginDecelerating(_ scrollView: UIScrollView) {
-//        scrollView.setContentOffset(scrollView.contentOffset, animated: true)
-//        selectedItem = tempTarget
-//    }
     
     func scrollViewWillEndDragging(_ scrollView: UIScrollView,
                                    withVelocity velocity: CGPoint,
                                    targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-//        tempTarget = calculateTarget(cordinate: targetContentOffset.pointee.x)
-//        print("tempTarget: \(tempTarget), velocity: \(velocity.x)")
         guard abs(velocity.x) == 0 else { return }
         let target = calculateTarget()
         selectedItem = target
     }
     
-//    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-//        guard decelerate else { return }
-//        selectedItem = tempTarget
-//    }
-    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         updateTransforms()
-    }
-    
-    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        scrollView.setContentOffset(scrollView.contentOffset, animated: true)
+        
+        guard !isTracking, !isScrollHold else { return }
+        
+        let currentTime = Int64(Date.timeIntervalSinceReferenceDate*1000)
+        let timeDiff = currentTime - previousTime
+        
+        if timeDiff < 300 {
+            let distance = scrollOffset - previousOffset
+            scrollSpeed = distance/CGFloat(timeDiff)
+            if abs(scrollSpeed) < 0.35 {
+                selectedItem = calculateTarget()
+                isScrollHold = true
+            }
+        }
+        
+        previousTime = currentTime
+        previousOffset = scrollOffset
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        isScrollHold = true
         selectedItem = indexPath.item
     }
  
@@ -163,15 +168,7 @@ private extension CustomCollectionView {
         if target < 0 { return 0 }
         return target
     }
-    
-    func calculateTarget(cordinate: CGFloat) -> Int {
-        guard scrollMaxOffset > 0 else { return 0 }
-        let qty = itemsQty - 1
-        let target = Int(round(CGFloat(qty) * cordinate/scrollMaxOffset))
-        if target > qty { return qty }
-        if target < 0 { return 0 }
-        return target
-    }
+
 }
 
 protocol FilterCollectionDelegate: class {
