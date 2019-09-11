@@ -3,8 +3,9 @@ import UIKit
 class CustomCollectionViewCell: UICollectionViewCell {
     
     //MARK: - variables
-    private let offset: CGFloat = 2
-    private let imageView: UIImageView = {
+    private let borderCell: CGFloat = 1
+    private let borderImage: CGFloat = 2
+    let imageView: UIImageView = {
         let iV = UIImageView()
         iV.contentMode = .scaleAspectFit
         iV.translatesAutoresizingMaskIntoConstraints = false
@@ -37,18 +38,23 @@ class CustomCollectionViewCell: UICollectionViewCell {
 private extension CustomCollectionViewCell {
     
     func setup() {
-        layer.borderWidth = offset
-        layer.borderColor = UIColor.white.cgColor
+        layer.borderWidth = self.borderCell
+        layer.borderColor = UIColor.black.cgColor
         layer.masksToBounds = true
         backgroundColor = .clear
         
         addSubview(imageView)
         NSLayoutConstraint.activate([
-            imageView.leftAnchor.constraint(equalTo: leftAnchor, constant: offset),
-            imageView.rightAnchor.constraint(equalTo: rightAnchor, constant: offset),
-            imageView.topAnchor.constraint(equalTo: topAnchor, constant: offset),
-            imageView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: offset)
+            imageView.leftAnchor.constraint(equalTo: leftAnchor, constant: borderCell),
+            imageView.rightAnchor.constraint(equalTo: rightAnchor, constant: -borderCell),
+            imageView.topAnchor.constraint(equalTo: topAnchor, constant: borderCell),
+            imageView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -borderCell)
             ])
+        layoutIfNeeded()
+        imageView.layer.borderWidth = self.borderImage
+        imageView.layer.borderColor = UIColor.white.cgColor
+        imageView.layer.masksToBounds = true
+        imageView.layer.cornerRadius = imageView.frame.height/2
     }
     
 }

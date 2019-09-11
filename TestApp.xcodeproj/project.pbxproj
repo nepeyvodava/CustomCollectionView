@@ -15,7 +15,6 @@
 		E79E35C62325233800C0342B /* CustomCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79E35C52325233800C0342B /* CustomCollectionView.swift */; };
 		E79E35C92325242F00C0342B /* Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79E35C82325242F00C0342B /* Data.swift */; };
 		E79E35CB2326372B00C0342B /* CustomCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79E35CA2326372B00C0342B /* CustomCollectionViewCell.swift */; };
-		E79E35CD2328EF9200C0342B /* CarouselColectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79E35CC2328EF9200C0342B /* CarouselColectionViewLayout.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,7 +28,6 @@
 		E79E35C52325233800C0342B /* CustomCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCollectionView.swift; sourceTree = "<group>"; };
 		E79E35C82325242F00C0342B /* Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
 		E79E35CA2326372B00C0342B /* CustomCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCollectionViewCell.swift; sourceTree = "<group>"; };
-		E79E35CC2328EF9200C0342B /* CarouselColectionViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselColectionViewLayout.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,7 +77,6 @@
 			children = (
 				E79E35CA2326372B00C0342B /* CustomCollectionViewCell.swift */,
 				E79E35C52325233800C0342B /* CustomCollectionView.swift */,
-				E79E35CC2328EF9200C0342B /* CarouselColectionViewLayout.swift */,
 			);
 			path = CustomCollectionView;
 			sourceTree = "<group>";
@@ -166,7 +163,6 @@
 				E79E35B32325204100C0342B /* ViewController.swift in Sources */,
 				E79E35CB2326372B00C0342B /* CustomCollectionViewCell.swift in Sources */,
 				E79E35C92325242F00C0342B /* Data.swift in Sources */,
-				E79E35CD2328EF9200C0342B /* CarouselColectionViewLayout.swift in Sources */,
 				E79E35B12325204100C0342B /* AppDelegate.swift in Sources */,
 				E79E35C62325233800C0342B /* CustomCollectionView.swift in Sources */,
 			);

@@ -4,13 +4,16 @@ class CustomCollectionView: UICollectionView {
     
     //MARK: - variables
     var minimumLineSpacing: CGFloat = 20
-    var itemSize: CGSize { return CGSize(width: frame.height, height: frame.height) }
-    var centerCellScale: CGFloat = 1.3
+    var itemSize: CGSize { return CGSize(width: frame.height/centerCellScale, height: frame.height/centerCellScale) }
+    var centerCellScale: CGFloat = 1.4
+    var tempTarget: Int = 0
     var selectedItem: Int = 0 {
         didSet{
             guard itemsQty > 0 else { return }
             let index = IndexPath(item: selectedItem, section: 0)
+//            self.selectItem(at: index, animated: true, scrollPosition: .centeredHorizontally)
             self.scrollToItem(at: index, at: .centeredHorizontally, animated: true)
+            filterDelegate?.itemDidSelected(item: selectedItem)
         }
     }
     let collectionViewFlowLayout: UICollectionViewFlowLayout = {
@@ -18,6 +21,8 @@ class CustomCollectionView: UICollectionView {
         collectionLayout.scrollDirection = .horizontal
         return collectionLayout
     }()
+    
+    var filterDelegate: FilterCollectionDelegate?
     
     //MARK: - init
     convenience init() {
@@ -54,7 +59,7 @@ private extension CustomCollectionView {
         self.isMultipleTouchEnabled = false
         self.showsHorizontalScrollIndicator = false
         self.backgroundColor = .clear
-        self.layer.masksToBounds = false
+        self.layer.masksToBounds = true
         self.collectionViewLayout = collectionViewFlowLayout
         self.register(CustomCollectionViewCell.self, forCellWithReuseIdentifier: "CustomCell")
         delegate = self
@@ -70,13 +75,25 @@ extension CustomCollectionView: UICollectionViewDelegate {
         selectedItem = target
     }
     
+//    func scrollViewWillBeginDecelerating(_ scrollView: UIScrollView) {
+//        scrollView.setContentOffset(scrollView.contentOffset, animated: true)
+//        selectedItem = tempTarget
+//    }
+    
     func scrollViewWillEndDragging(_ scrollView: UIScrollView,
                                    withVelocity velocity: CGPoint,
                                    targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+//        tempTarget = calculateTarget(cordinate: targetContentOffset.pointee.x)
+//        print("tempTarget: \(tempTarget), velocity: \(velocity.x)")
         guard abs(velocity.x) == 0 else { return }
         let target = calculateTarget()
         selectedItem = target
     }
+    
+//    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+//        guard decelerate else { return }
+//        selectedItem = tempTarget
+//    }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         updateTransforms()
@@ -146,5 +163,19 @@ private extension CustomCollectionView {
         if target < 0 { return 0 }
         return target
     }
+    
+    func calculateTarget(cordinate: CGFloat) -> Int {
+        guard scrollMaxOffset > 0 else { return 0 }
+        let qty = itemsQty - 1
+        let target = Int(round(CGFloat(qty) * cordinate/scrollMaxOffset))
+        if target > qty { return qty }
+        if target < 0 { return 0 }
+        return target
+    }
+}
+
+protocol FilterCollectionDelegate: class {
+    
+    func itemDidSelected(item: Int)
     
 }
