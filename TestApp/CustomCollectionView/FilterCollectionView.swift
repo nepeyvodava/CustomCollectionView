@@ -6,6 +6,7 @@ class FilterCollectionView: UICollectionView {
     var minimumLineSpacing: CGFloat = 20
     var loupeWidth: CGFloat { return itemWidth }
     var centerCellScale: CGFloat = 1.4
+    
     var selectedItem: Int = 0 {
         didSet{
             guard itemsQty > 0 else { return }
@@ -159,13 +160,13 @@ class FilterCollectionFlowLayout: UICollectionViewFlowLayout {
         }
         
         let pageWidth = collectionView.itemWidth + collectionView.itemSpacing
-        let approximatePage = collectionView.contentOffset.x/pageWidth
+        let approximateNumberPage = collectionView.contentOffset.x/pageWidth
         
         var currentPage: CGFloat = 0
         if velocity.x == 0 {
-            currentPage = round(approximatePage)
+            currentPage = round(approximateNumberPage)
         } else {
-            currentPage = (velocity.x < 0.0) ? floor(approximatePage) : ceil(approximatePage)
+            currentPage = (velocity.x < 0.0) ? floor(approximateNumberPage) : ceil(approximateNumberPage)
         }
         
         let flickedPages = (abs(round(velocity.x)) <= 0.8) ? 0 : round(velocity.x)
