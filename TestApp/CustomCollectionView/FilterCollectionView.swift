@@ -58,7 +58,7 @@ private extension FilterCollectionView {
         self.layer.masksToBounds = true
         self.collectionViewLayout = collectionViewFlowLayout
         
-        self.register(CustomCollectionViewCell.self, forCellWithReuseIdentifier: "CustomCell")
+        self.register(FilterCollectionViewCell.self, forCellWithReuseIdentifier: "CustomCell")
         delegate = self
         self.decelerationRate = .fast
     }
@@ -172,7 +172,8 @@ class FilterCollectionFlowLayout: UICollectionViewFlowLayout {
         
         let newHorizontalOffset = ((currentPage + flickedPages) * pageWidth) - self.collectionView!.contentInset.left
         
-        collectionView.selectedItem = collectionView.calculateTarget(offset: newHorizontalOffset)
+        let item = collectionView.calculateTarget(offset: newHorizontalOffset)
+        if item != collectionView.selectedItem { collectionView.selectedItem = item }
         
         return CGPoint(x: newHorizontalOffset, y: proposedContentOffset.y)
     }

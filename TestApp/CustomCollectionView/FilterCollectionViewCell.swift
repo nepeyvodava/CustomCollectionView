@@ -1,6 +1,6 @@
 import UIKit
 
-class CustomCollectionViewCell: UICollectionViewCell {
+class FilterCollectionViewCell: UICollectionViewCell {
     
     //MARK: - variables
     private let borderCell: CGFloat = 1
@@ -35,7 +35,7 @@ class CustomCollectionViewCell: UICollectionViewCell {
 
 }
 
-private extension CustomCollectionViewCell {
+private extension FilterCollectionViewCell {
     
     func setup() {
         layer.borderWidth = self.borderCell
