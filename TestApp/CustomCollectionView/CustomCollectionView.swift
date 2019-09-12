@@ -4,14 +4,11 @@ class FilterCollectionView: UICollectionView {
     
     //MARK: - variables
     var minimumLineSpacing: CGFloat = 20
-    var itemSize: CGSize { return CGSize(width: frame.height/centerCellScale, height: frame.height/centerCellScale) }
+    var loupeWidth: CGFloat { return itemWidth }
     var centerCellScale: CGFloat = 1.4
-    var tempTarget: Int = 0
     var selectedItem: Int = 0 {
         didSet{
             guard itemsQty > 0 else { return }
-            let index = IndexPath(item: selectedItem, section: 0)
-            self.scrollToItem(at: index, at: .centeredHorizontally, animated: true)
             filterDelegate?.itemDidSelected(item: selectedItem)
         }
     }
@@ -75,7 +72,17 @@ extension FilterCollectionView: UICollectionViewDelegate {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard indexPath.item != selectedItem else { return }
         selectedItem = indexPath.item
+        collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+
+        // for duoble cklick bug fix
+        self.isUserInteractionEnabled = false
+    }
+    
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        // for duoble cklick bug fix
+        self.isUserInteractionEnabled = true
     }
     
 }
@@ -100,13 +107,13 @@ extension FilterCollectionView: UICollectionViewDelegateFlowLayout {
 
 private extension FilterCollectionView {
     
-    var windowWidth: CGFloat { return itemWidth }
+    var itemSize: CGSize { return CGSize(width: frame.height/centerCellScale, height: frame.height/centerCellScale) }
     var itemWidth: CGFloat { return self.itemSize.width }
     var itemSpacing: CGFloat { return self.minimumLineSpacing }
     var itemsQty: Int { return numberOfItems(inSection: 0) }
     var scrollOffset: CGFloat { return self.contentOffset.x + self.contentInset.left }
     var scrollMaxOffset: CGFloat { return CGFloat(itemsQty - 1) * (itemWidth + itemSpacing) }
-    
+
     func getCenterOfItem(_ item: Int) -> CGFloat {
         let result = CGFloat(item)*(itemWidth + itemSpacing) - scrollOffset
         return result
@@ -117,22 +124,13 @@ private extension FilterCollectionView {
         for i in 0...(itemsQty-1) {
             guard let cell = cellForItem(at: IndexPath(item: i, section: 0)) else { continue }
             let centerX = abs(getCenterOfItem(i))
-            if centerX > windowWidth {
+            if centerX > loupeWidth {
                 cell.transform = .identity
             } else {
-                let scale = centerCellScale - (centerCellScale - 1)*centerX/windowWidth
+                let scale = centerCellScale - (centerCellScale - 1)*centerX/loupeWidth
                 cell.transform = .init(scaleX: scale, y: scale)
             }
         }
-    }
-    
-    func calculateTarget() -> Int {
-        guard scrollMaxOffset > 0 else { return 0 }
-        let qty = itemsQty - 1
-        let target = Int(round(CGFloat(qty) * scrollOffset/scrollMaxOffset))
-        if target > qty { return qty }
-        if target < 0 { return 0 }
-        return target
     }
     
     func calculateTarget(offset: CGFloat) -> Int {
@@ -170,10 +168,11 @@ class FilterCollectionFlowLayout: UICollectionViewFlowLayout {
             currentPage = (velocity.x < 0.0) ? floor(approximatePage) : ceil(approximatePage)
         }
         
-        let flickedPages = (abs(round(velocity.x)) <= 0.9) ? 0 : round(velocity.x)
-        print(velocity.x)
+        let flickedPages = (abs(round(velocity.x)) <= 0.8) ? 0 : round(velocity.x)
         
         let newHorizontalOffset = ((currentPage + flickedPages) * pageWidth) - self.collectionView!.contentInset.left
+        
+        collectionView.selectedItem = collectionView.calculateTarget(offset: newHorizontalOffset)
         
         return CGPoint(x: newHorizontalOffset, y: proposedContentOffset.y)
     }
