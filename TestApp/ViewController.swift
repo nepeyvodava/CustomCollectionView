@@ -24,7 +24,7 @@ class ViewController: UIViewController {
     }()
 
     //MARK: - Outlets
-    @IBOutlet weak var collectionView: CustomCollectionView!
+    @IBOutlet weak var collectionView: FilterCollectionView!
     @IBOutlet weak var filterLabel: UILabel!
     
     override func viewDidLoad() {

@@ -1,11 +1,12 @@
 import UIKit
 
-class CustomCollectionView: UICollectionView {
+class FilterCollectionView: UICollectionView {
     
     //MARK: - variables
     var minimumLineSpacing: CGFloat = 20
     var itemSize: CGSize { return CGSize(width: frame.height/centerCellScale, height: frame.height/centerCellScale) }
     var centerCellScale: CGFloat = 1.4
+    var tempTarget: Int = 0
     var selectedItem: Int = 0 {
         didSet{
             guard itemsQty > 0 else { return }
@@ -14,8 +15,8 @@ class CustomCollectionView: UICollectionView {
             filterDelegate?.itemDidSelected(item: selectedItem)
         }
     }
-    let collectionViewFlowLayout: UICollectionViewFlowLayout = {
-        let collectionLayout = UICollectionViewFlowLayout()
+    let collectionViewFlowLayout: FilterCollectionFlowLayout = {
+        let collectionLayout =  FilterCollectionFlowLayout()
         collectionLayout.scrollDirection = .horizontal
         return collectionLayout
     }()
@@ -39,24 +40,18 @@ class CustomCollectionView: UICollectionView {
     }
     
     /*
-    / MARK: - configure
-    / use this method in viewDidLoad() of datasourse class
-    */
+     / MARK: - configure
+     / use this method in viewDidLoad() of datasourse class
+     */
     func configure() {
         layoutIfNeeded()
         updateTransforms()
         selectedItem = 0
     }
     
-    //MARK: - for speed calculate
-    private var previousOffset: CGFloat = 0
-    private var previousTime: Int64 = Int64(Date.timeIntervalSinceReferenceDate*1000)
-    private var scrollSpeed: CGFloat = 0
-    private var isScrollHold: Bool = false
-    
 }
 
-private extension CustomCollectionView {
+private extension FilterCollectionView {
     
     func setup() {
         self.isPagingEnabled = false
@@ -65,6 +60,7 @@ private extension CustomCollectionView {
         self.backgroundColor = .clear
         self.layer.masksToBounds = true
         self.collectionViewLayout = collectionViewFlowLayout
+        
         self.register(CustomCollectionViewCell.self, forCellWithReuseIdentifier: "CustomCell")
         delegate = self
         self.decelerationRate = .fast
@@ -72,49 +68,19 @@ private extension CustomCollectionView {
     
 }
 
-extension CustomCollectionView: UICollectionViewDelegate {
-    
-    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        isScrollHold = false
-    }
-    
-    func scrollViewWillEndDragging(_ scrollView: UIScrollView,
-                                   withVelocity velocity: CGPoint,
-                                   targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        guard abs(velocity.x) == 0 else { return }
-        let target = calculateTarget()
-        selectedItem = target
-    }
+extension FilterCollectionView: UICollectionViewDelegate {
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         updateTransforms()
-        
-        guard !isTracking, !isScrollHold else { return }
-        
-        let currentTime = Int64(Date.timeIntervalSinceReferenceDate*1000)
-        let timeDiff = currentTime - previousTime
-        
-        if timeDiff < 300 {
-            let distance = scrollOffset - previousOffset
-            scrollSpeed = distance/CGFloat(timeDiff)
-            if abs(scrollSpeed) < 0.35 {
-                selectedItem = calculateTarget()
-                isScrollHold = true
-            }
-        }
-        
-        previousTime = currentTime
-        previousOffset = scrollOffset
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        isScrollHold = true
         selectedItem = indexPath.item
     }
- 
+    
 }
 
-extension CustomCollectionView: UICollectionViewDelegateFlowLayout {
+extension FilterCollectionView: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         let offset = (self.bounds.width - itemWidth)/2
@@ -132,7 +98,7 @@ extension CustomCollectionView: UICollectionViewDelegateFlowLayout {
 }
 
 
-private extension CustomCollectionView {
+private extension FilterCollectionView {
     
     var windowWidth: CGFloat { return itemWidth }
     var itemWidth: CGFloat { return self.itemSize.width }
@@ -168,11 +134,48 @@ private extension CustomCollectionView {
         if target < 0 { return 0 }
         return target
     }
-
+    
+    func calculateTarget(offset: CGFloat) -> Int {
+        guard scrollMaxOffset > 0 else { return 0 }
+        let qty = itemsQty - 1
+        let target = Int(round(CGFloat(qty) * offset/scrollMaxOffset))
+        if target > qty { return qty }
+        if target < 0 { return 0 }
+        return target
+    }
+    
 }
 
 protocol FilterCollectionDelegate: class {
     
     func itemDidSelected(item: Int)
+    
+}
+
+
+class FilterCollectionFlowLayout: UICollectionViewFlowLayout {
+    
+    override func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint, withScrollingVelocity velocity: CGPoint) -> CGPoint {
+        guard let collectionView = self.collectionView as? FilterCollectionView else {
+            return super .targetContentOffset(forProposedContentOffset: proposedContentOffset, withScrollingVelocity: velocity)
+        }
+        
+        let pageWidth = collectionView.itemWidth + collectionView.itemSpacing
+        let approximatePage = collectionView.contentOffset.x/pageWidth
+        
+        var currentPage: CGFloat = 0
+        if velocity.x == 0 {
+            currentPage = round(approximatePage)
+        } else {
+            currentPage = (velocity.x < 0.0) ? floor(approximatePage) : ceil(approximatePage)
+        }
+        
+        let flickedPages = (abs(round(velocity.x)) <= 0.9) ? 0 : round(velocity.x)
+        print(velocity.x)
+        
+        let newHorizontalOffset = ((currentPage + flickedPages) * pageWidth) - self.collectionView!.contentInset.left
+        
+        return CGPoint(x: newHorizontalOffset, y: proposedContentOffset.y)
+    }
     
 }
