@@ -1,22 +1,25 @@
 import UIKit
 
+//MARK: - Protocol FilterCollectionViewDelegate
 protocol FilterCollectionViewDelegate: class {
     
     func itemDidChanged(item: Int)
     
 }
 
+
+//MARK: - Class FilterCollectionView
 class FilterCollectionView: UICollectionView {
     
-    //MARK: - options
+    //MARK: options
     var minimumLineSpacing: CGFloat = 20
     var loupeWidth: CGFloat { return itemWidth }
     var centerCellScale: CGFloat = 1.4
     
-    //MARK: - variables
+    //MARK: variables
     var selectedItem: Int = 0 {
         didSet{
-            guard itemsQty > 0 else { return }
+            guard itemsQuantity > 0 else { return }
             filterDelegate?.itemDidChanged(item: selectedItem)
         }
     }
@@ -28,7 +31,7 @@ class FilterCollectionView: UICollectionView {
     
     var filterDelegate: FilterCollectionViewDelegate?
     
-    //MARK: - init
+    //MARK: init
     convenience init() {
         self.init()
         self.setup()
@@ -45,7 +48,7 @@ class FilterCollectionView: UICollectionView {
     }
     
     /*
-     / MARK: - configure
+     / MARK: configure
      / use this method in viewDidLoad() of datasourse class
      */
     func configure() {
@@ -56,6 +59,7 @@ class FilterCollectionView: UICollectionView {
     
 }
 
+//MARK: - Private Ext FilterCollectionView
 private extension FilterCollectionView {
     
     func setup() {
@@ -66,7 +70,7 @@ private extension FilterCollectionView {
         self.layer.masksToBounds = true
         self.collectionViewLayout = collectionViewFlowLayout
         
-        self.register(FilterCollectionViewCell.self, forCellWithReuseIdentifier: "CustomCell")
+        self.register(FilterCollectionViewCell.self, forCellWithReuseIdentifier: "FilterViewCell")
         delegate = self
         self.decelerationRate = .fast
     }
@@ -85,12 +89,12 @@ extension FilterCollectionView: UICollectionViewDelegate {
         selectedItem = indexPath.item
         collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
 
-        // for duoble cklick bug fix
+        // for double cklick bug fix
         self.isUserInteractionEnabled = false
     }
     
     func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        // for duoble cklick bug fix
+        // for double cklick bug fix
         self.isUserInteractionEnabled = true
     }
     
@@ -136,9 +140,9 @@ private extension FilterCollectionView {
     var itemSize: CGSize { return CGSize(width: frame.height/centerCellScale, height: frame.height/centerCellScale) }
     var itemWidth: CGFloat { return self.itemSize.width }
     var itemSpacing: CGFloat { return self.minimumLineSpacing }
-    var itemsQty: Int { return numberOfItems(inSection: 0) }
+    var itemsQuantity: Int { return numberOfItems(inSection: 0) }
     var scrollOffset: CGFloat { return self.contentOffset.x + self.contentInset.left }
-    var scrollMaxOffset: CGFloat { return CGFloat(itemsQty - 1) * (itemWidth + itemSpacing) }
+    var scrollMaxOffset: CGFloat { return CGFloat(itemsQuantity - 1) * (itemWidth + itemSpacing) }
 
     func getCenterOfItem(_ item: Int) -> CGFloat {
         let result = CGFloat(item)*(itemWidth + itemSpacing) - scrollOffset
@@ -146,8 +150,8 @@ private extension FilterCollectionView {
     }
     
     func updateTransforms() {
-        guard itemsQty > 0 else { return }
-        for i in 0...(itemsQty-1) {
+        guard itemsQuantity > 0 else { return }
+        for i in 0...(itemsQuantity-1) {
             guard let cell = cellForItem(at: IndexPath(item: i, section: 0)) else { continue }
             let centerX = abs(getCenterOfItem(i))
             if centerX > loupeWidth {
@@ -161,7 +165,7 @@ private extension FilterCollectionView {
     
     func calculateTarget(offset: CGFloat) -> Int {
         guard scrollMaxOffset > 0 else { return 0 }
-        let qty = itemsQty - 1
+        let qty = itemsQuantity - 1
         let target = Int(round(CGFloat(qty) * offset/scrollMaxOffset))
         if target > qty { return qty }
         if target < 0 { return 0 }
@@ -170,6 +174,8 @@ private extension FilterCollectionView {
     
 }
 
+
+//MARK: - Class FilterCollectionFlowLayout
 class FilterCollectionFlowLayout: UICollectionViewFlowLayout {
     
     override func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint, withScrollingVelocity velocity: CGPoint) -> CGPoint {

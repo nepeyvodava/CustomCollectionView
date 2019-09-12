@@ -1,12 +1,13 @@
 import UIKit
 
+//MARK: - Class FilterCollectionViewCell
 class FilterCollectionViewCell: UICollectionViewCell {
     
-    //MARK: - options
+    //MARK: options
     private let borderCell: CGFloat = 1
     private let borderImage: CGFloat = 2
     
-    //MARK: - variables
+    //MARK: variables
     let imageView: UIImageView = {
         let iV = UIImageView()
         iV.contentMode = .scaleAspectFit
@@ -19,7 +20,7 @@ class FilterCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    //MARK: - init
+    //MARK: init
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
@@ -36,6 +37,7 @@ class FilterCollectionViewCell: UICollectionViewCell {
 
 }
 
+//MARK: - Private Ext FilterCollectionViewCell
 private extension FilterCollectionViewCell {
     
     func setup() {

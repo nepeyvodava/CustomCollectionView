@@ -1,8 +1,9 @@
 import UIKit
 
+//MARK: - Class ViewController
 class ViewController: UIViewController {
     
-    //MARK: - variables
+    //MARK: variables
     let data: [Data] = [Data(image: UIImage(named: " "), title: "original"),
                         Data(image: UIImage(named: "1"), title: "filter 1"),
                         Data(image: UIImage(named: "2"), title: "filter 2"),
@@ -23,10 +24,11 @@ class ViewController: UIViewController {
         return v
     }()
 
-    //MARK: - Outlets
+    //MARK: Outlets
     @IBOutlet weak var collectionView: FilterCollectionView!
     @IBOutlet weak var filterLabel: UILabel!
     
+    //MARK: ViewController Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -36,7 +38,12 @@ class ViewController: UIViewController {
         
         setupViews()
     }
+    
+}
 
+//MARK: - Private Ext
+private extension ViewController {
+    
     func setupViews() {
         view.addSubview(round)
         NSLayoutConstraint.activate([
@@ -51,6 +58,7 @@ class ViewController: UIViewController {
     
 }
 
+//MARK: - UICollectionViewDataSource Methods
 extension ViewController: UICollectionViewDataSource {
   
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -62,7 +70,7 @@ extension ViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CustomCell", for: indexPath) as? FilterCollectionViewCell
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FilterViewCell", for: indexPath) as? FilterCollectionViewCell
             else { return UICollectionViewCell() }
 
         cell.configure(image: data[indexPath.item].image)
@@ -71,6 +79,7 @@ extension ViewController: UICollectionViewDataSource {
     
 }
 
+//MARK: - FilterCollectionViewDelegate Methods
 extension ViewController: FilterCollectionViewDelegate {
     
     func itemDidChanged(item: Int) {
