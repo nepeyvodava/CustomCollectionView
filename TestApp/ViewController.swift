@@ -3,7 +3,7 @@ import UIKit
 class ViewController: UIViewController {
     
     //MARK: - variables
-    let data: [Data] = [Data(image: UIImage(named: ""), title: "no filter"),
+    let data: [Data] = [Data(image: UIImage(named: " "), title: "original"),
                         Data(image: UIImage(named: "1"), title: "filter 1"),
                         Data(image: UIImage(named: "2"), title: "filter 2"),
                         Data(image: UIImage(named: "3"), title: "filter 3"),
