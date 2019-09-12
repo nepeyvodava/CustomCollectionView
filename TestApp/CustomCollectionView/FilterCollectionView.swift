@@ -1,16 +1,23 @@
 import UIKit
 
+protocol FilterCollectionViewDelegate: class {
+    
+    func itemDidChanged(item: Int)
+    
+}
+
 class FilterCollectionView: UICollectionView {
     
-    //MARK: - variables
+    //MARK: - options
     var minimumLineSpacing: CGFloat = 20
     var loupeWidth: CGFloat { return itemWidth }
     var centerCellScale: CGFloat = 1.4
     
+    //MARK: - variables
     var selectedItem: Int = 0 {
         didSet{
             guard itemsQty > 0 else { return }
-            filterDelegate?.itemDidSelected(item: selectedItem)
+            filterDelegate?.itemDidChanged(item: selectedItem)
         }
     }
     let collectionViewFlowLayout: FilterCollectionFlowLayout = {
@@ -19,7 +26,7 @@ class FilterCollectionView: UICollectionView {
         return collectionLayout
     }()
     
-    var filterDelegate: FilterCollectionDelegate?
+    var filterDelegate: FilterCollectionViewDelegate?
     
     //MARK: - init
     convenience init() {
@@ -66,6 +73,7 @@ private extension FilterCollectionView {
     
 }
 
+//MARK: - UICollectionViewDelegate methods
 extension FilterCollectionView: UICollectionViewDelegate {
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -86,8 +94,21 @@ extension FilterCollectionView: UICollectionViewDelegate {
         self.isUserInteractionEnabled = true
     }
     
+    // -------------------
+    // Animation if needed
+    // -------------------
+    /*
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        cell.transform = CGAffineTransform(scaleX: 1, y: 0.3)
+        UIView.animate(withDuration: 0.2) {
+            cell.transform = .identity
+        }
+    }
+     */
+    
 }
 
+//MARK: - UICollectionViewDelegateFlowLayout methods
 extension FilterCollectionView: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
@@ -99,13 +120,17 @@ extension FilterCollectionView: UICollectionViewDelegateFlowLayout {
         return self.minimumLineSpacing
     }
     
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return frame.height
+    }
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return self.itemSize
     }
     
 }
 
-
+//MARK: - calculate methods
 private extension FilterCollectionView {
     
     var itemSize: CGSize { return CGSize(width: frame.height/centerCellScale, height: frame.height/centerCellScale) }
@@ -145,13 +170,6 @@ private extension FilterCollectionView {
     
 }
 
-protocol FilterCollectionDelegate: class {
-    
-    func itemDidSelected(item: Int)
-    
-}
-
-
 class FilterCollectionFlowLayout: UICollectionViewFlowLayout {
     
     override func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint, withScrollingVelocity velocity: CGPoint) -> CGPoint {
@@ -169,9 +187,9 @@ class FilterCollectionFlowLayout: UICollectionViewFlowLayout {
             currentPage = (velocity.x < 0.0) ? floor(approximateNumberPage) : ceil(approximateNumberPage)
         }
         
-        let flickedPages = (abs(round(velocity.x)) <= 0.8) ? 0 : round(velocity.x)
+        let flickedPages = (abs(round(velocity.x)) < 0.8) ? 0 : round(velocity.x)
         
-        let newHorizontalOffset = ((currentPage + flickedPages) * pageWidth) - self.collectionView!.contentInset.left
+        let newHorizontalOffset = ((currentPage + flickedPages) * pageWidth) - collectionView.contentInset.left
         
         let item = collectionView.calculateTarget(offset: newHorizontalOffset)
         if item != collectionView.selectedItem { collectionView.selectedItem = item }

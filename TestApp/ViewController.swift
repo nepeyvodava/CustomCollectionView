@@ -42,8 +42,8 @@ class ViewController: UIViewController {
         NSLayoutConstraint.activate([
             round.centerXAnchor.constraint(equalTo: collectionView.centerXAnchor, constant: 0),
             round.centerYAnchor.constraint(equalTo: collectionView.centerYAnchor, constant: 0),
-            round.widthAnchor.constraint(equalToConstant: 80),
-            round.heightAnchor.constraint(equalToConstant: 80)
+            round.widthAnchor.constraint(equalTo: collectionView.heightAnchor, constant: round.layer.borderWidth*2),
+            round.heightAnchor.constraint(equalTo: collectionView.heightAnchor, constant: round.layer.borderWidth*2)
             ])
         round.layoutIfNeeded()
         round.layer.cornerRadius = round.bounds.width/2
@@ -71,9 +71,9 @@ extension ViewController: UICollectionViewDataSource {
     
 }
 
-extension ViewController: FilterCollectionDelegate {
+extension ViewController: FilterCollectionViewDelegate {
     
-    func itemDidSelected(item: Int) {
+    func itemDidChanged(item: Int) {
         self.filterLabel.text = data[item].title
     }
     

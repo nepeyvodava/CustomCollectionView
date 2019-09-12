@@ -2,16 +2,17 @@ import UIKit
 
 class FilterCollectionViewCell: UICollectionViewCell {
     
-    //MARK: - variables
+    //MARK: - options
     private let borderCell: CGFloat = 1
     private let borderImage: CGFloat = 2
+    
+    //MARK: - variables
     let imageView: UIImageView = {
         let iV = UIImageView()
         iV.contentMode = .scaleAspectFit
         iV.translatesAutoresizingMaskIntoConstraints = false
         return iV
     }()
-    
     override var frame: CGRect {
         didSet{
             layer.cornerRadius = frame.height/2
