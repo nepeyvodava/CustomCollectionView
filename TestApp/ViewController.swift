@@ -34,9 +34,14 @@ class ViewController: UIViewController {
         
         collectionView.dataSource = self
         collectionView.filterDelegate = self
-        collectionView.configure()
         
         setupViews()
+        initialSetup()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        round.layer.cornerRadius = round.bounds.width/2
     }
     
 }
@@ -52,8 +57,10 @@ private extension ViewController {
             round.widthAnchor.constraint(equalTo: collectionView.heightAnchor, constant: round.layer.borderWidth*2),
             round.heightAnchor.constraint(equalTo: collectionView.heightAnchor, constant: round.layer.borderWidth*2)
             ])
-        round.layoutIfNeeded()
-        round.layer.cornerRadius = round.bounds.width/2
+    }
+    
+    func initialSetup() {
+        self.filterLabel.text = data[0].title
     }
     
 }
@@ -70,7 +77,8 @@ extension ViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FilterViewCell", for: indexPath) as? FilterCollectionViewCell
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FilterCollectionViewCell.reuseID,
+                                                            for: indexPath) as? FilterCollectionViewCell
             else { return UICollectionViewCell() }
 
         cell.configure(image: data[indexPath.item].image)
@@ -82,7 +90,7 @@ extension ViewController: UICollectionViewDataSource {
 //MARK: - FilterCollectionViewDelegate Methods
 extension ViewController: FilterCollectionViewDelegate {
     
-    func itemDidChanged(item: Int) {
+    func itemDidChange(item: Int) {
         self.filterLabel.text = data[item].title
     }
     
