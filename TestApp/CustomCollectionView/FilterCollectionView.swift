@@ -3,7 +3,7 @@ import UIKit
 //MARK: - Protocol FilterCollectionViewDelegate
 protocol FilterCollectionViewDelegate: class {
     
-    func itemDidChange(item: Int)
+    func didSelectItem(item: Int)
     
 }
 
@@ -22,7 +22,7 @@ class FilterCollectionView: UICollectionView {
             guard itemsQuantity > 0, selectedItem != oldValue else { return }
             let index = IndexPath(item: selectedItem, section: 0)
             self.scrollToItem(at: index, at: .centeredHorizontally, animated: true)
-            filterDelegate?.itemDidChange(item: selectedItem)
+            filterDelegate?.didSelectItem(item: selectedItem)
         }
     }
     
@@ -75,7 +75,6 @@ extension FilterCollectionView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard indexPath.item != selectedItem else { return }
         selectedItem = indexPath.item
-//        collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
 
         // for double cklick bug fix
         self.isUserInteractionEnabled = false

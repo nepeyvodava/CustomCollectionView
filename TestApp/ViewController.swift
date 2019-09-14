@@ -90,7 +90,7 @@ extension ViewController: UICollectionViewDataSource {
 //MARK: - FilterCollectionViewDelegate Methods
 extension ViewController: FilterCollectionViewDelegate {
     
-    func itemDidChange(item: Int) {
+    func didSelectItem(item: Int) {
         self.filterLabel.text = data[item].title
     }
     
