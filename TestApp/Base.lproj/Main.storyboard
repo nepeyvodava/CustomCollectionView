@@ -24,11 +24,11 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="9AV-2J-b9h" customClass="CustomCollectionView" customModule="TestApp">
-                                <rect key="frame" x="0.0" y="557" width="375" height="70"/>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="9AV-2J-b9h" customClass="FilterCollectionView" customModule="TestApp" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="552" width="375" height="75"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="70" id="R1B-R7-RmP"/>
+                                    <constraint firstAttribute="height" constant="75" id="R1B-R7-RmP"/>
                                 </constraints>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="jvq-WB-leM">
                                     <size key="itemSize" width="50" height="50"/>
