@@ -20,8 +20,6 @@ class FilterCollectionView: UICollectionView {
     fileprivate var selectedItem: Int = 0 {
         didSet{
             guard itemsQuantity > 0, selectedItem != oldValue else { return }
-            let index = IndexPath(item: selectedItem, section: 0)
-            self.scrollToItem(at: index, at: .centeredHorizontally, animated: true)
             filterDelegate?.didSelectItem(item: selectedItem)
         }
     }
@@ -29,9 +27,8 @@ class FilterCollectionView: UICollectionView {
     var filterDelegate: FilterCollectionViewDelegate?
     
     //MARK: init
-    init() {
-        super.init(frame: .zero, collectionViewLayout: FilterCollectionFlowLayout())
-        self.setup()
+    convenience init() {
+        self.init(frame: .zero)
     }
     
     init(frame: CGRect) {
@@ -41,9 +38,11 @@ class FilterCollectionView: UICollectionView {
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+        self.collectionViewLayout = FilterCollectionFlowLayout()
         self.setup()
     }
     
+    //MARK: refrech layouts
     override func layoutSubviews() {
         super.layoutSubviews()
         updateTransforms()
@@ -74,7 +73,7 @@ extension FilterCollectionView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard indexPath.item != selectedItem else { return }
         selectedItem = indexPath.item
-
+        self.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
         // for double cklick bug fix
         self.isUserInteractionEnabled = false
     }
@@ -88,12 +87,12 @@ extension FilterCollectionView: UICollectionViewDelegate {
     // Animation if needed
     // -------------------
     /*
-    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        cell.transform = CGAffineTransform(scaleX: 1, y: 0.3)
-        UIView.animate(withDuration: 0.2) {
-            cell.transform = .identity
-        }
-    }
+     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+     cell.transform = CGAffineTransform(scaleX: 1, y: 0.3)
+     UIView.animate(withDuration: 0.2) {
+     cell.transform = .identity
+     }
+     }
      */
     
 }
@@ -129,7 +128,7 @@ private extension FilterCollectionView {
     var itemsQuantity: Int { return numberOfItems(inSection: 0) }
     var scrollOffset: CGFloat { return self.contentOffset.x + self.contentInset.left }
     var scrollMaxOffset: CGFloat { return CGFloat(itemsQuantity - 1) * (itemWidth + itemSpacing) }
-
+    
     func getItemOffset(_ item: Int) -> CGFloat {
         let result = CGFloat(item)*(itemWidth + itemSpacing) - scrollOffset
         return result
