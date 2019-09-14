@@ -14,6 +14,7 @@ class ViewController: UIViewController {
                         Data(image: UIImage(named: "7"), title: "filter 7")
     ]
     
+    //MARK: Outlets
     let round: UIView = {
         let v = UIView()
         v.translatesAutoresizingMaskIntoConstraints = false
@@ -23,10 +24,18 @@ class ViewController: UIViewController {
         v.isUserInteractionEnabled = false
         return v
     }()
-
-    //MARK: Outlets
-    @IBOutlet weak var collectionView: FilterCollectionView!
-    @IBOutlet weak var filterLabel: UILabel!
+    let collectionView: FilterCollectionView = {
+        let collectionV = FilterCollectionView()
+        collectionV.translatesAutoresizingMaskIntoConstraints = false
+        return collectionV
+    }()
+    let filterLabel: UILabel = {
+        let lbl = UILabel()
+        lbl.translatesAutoresizingMaskIntoConstraints = false
+        lbl.textColor = .white
+        lbl.text = "None"
+        return lbl
+    }()
     
     //MARK: ViewController Life Cycle
     override func viewDidLoad() {
@@ -50,6 +59,22 @@ class ViewController: UIViewController {
 private extension ViewController {
     
     func setupViews() {
+        view.backgroundColor = .black
+        
+        view.addSubview(filterLabel)
+        NSLayoutConstraint.activate([
+            filterLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 0),
+            filterLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 0)
+            ])
+        
+        view.addSubview(collectionView)
+        NSLayoutConstraint.activate([
+            collectionView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0),
+            collectionView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -40),
+            collectionView.heightAnchor.constraint(equalToConstant: 75)
+            ])
+        
         view.addSubview(round)
         NSLayoutConstraint.activate([
             round.centerXAnchor.constraint(equalTo: collectionView.centerXAnchor, constant: 0),

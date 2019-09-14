@@ -28,9 +28,11 @@ class FilterCollectionViewCell: UICollectionViewCell {
         setupViews()
     }
     
+    //MARK: configure
     func configure(image: UIImage?) {
         self.imageView.image = image
     }
+    
     
     override func layoutSubviews() {
         super.layoutSubviews()

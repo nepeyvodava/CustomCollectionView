@@ -29,13 +29,13 @@ class FilterCollectionView: UICollectionView {
     var filterDelegate: FilterCollectionViewDelegate?
     
     //MARK: init
-    convenience init() {
-        self.init()
+    init() {
+        super.init(frame: .zero, collectionViewLayout: FilterCollectionFlowLayout())
         self.setup()
     }
     
-    convenience init(frame: CGRect) {
-        self.init(frame: frame)
+    init(frame: CGRect) {
+        super.init(frame: frame, collectionViewLayout: FilterCollectionFlowLayout())
         self.setup()
     }
     
@@ -60,7 +60,6 @@ private extension FilterCollectionView {
         self.showsHorizontalScrollIndicator = false
         self.backgroundColor = .clear
         self.layer.masksToBounds = true
-        self.collectionViewLayout = FilterCollectionFlowLayout()
         
         self.register(FilterCollectionViewCell.self, forCellWithReuseIdentifier: FilterCollectionViewCell.reuseID)
         delegate = self
