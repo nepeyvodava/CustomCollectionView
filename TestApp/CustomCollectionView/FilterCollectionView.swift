@@ -42,7 +42,7 @@ class FilterCollectionView: UICollectionView {
         self.setup()
     }
     
-    //MARK: refrech layouts
+    //MARK: refresh layouts
     override func layoutSubviews() {
         super.layoutSubviews()
         updateTransforms()
