@@ -83,17 +83,13 @@ extension FilterCollectionView: UICollectionViewDelegate {
         self.isUserInteractionEnabled = true
     }
     
-    // -------------------
-    // Animation if needed
-    // -------------------
-    /*
-     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-     cell.transform = CGAffineTransform(scaleX: 1, y: 0.3)
-     UIView.animate(withDuration: 0.2) {
-     cell.transform = .identity
-     }
-     }
-     */
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        cell.transform = CGAffineTransform(scaleX: 1, y: 0.3)
+        UIView.animate(withDuration: 0.2) {
+            cell.transform = .identity
+        }
+    }
+     
     
 }
 

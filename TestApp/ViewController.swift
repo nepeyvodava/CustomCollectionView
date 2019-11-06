@@ -40,6 +40,8 @@ class ViewController: UIViewController {
     //MARK: ViewController Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
+    
+        collectionView.register(PreviewCollectionViewCell.self, forCellWithReuseIdentifier: PreviewCollectionViewCell.reuseID)
         
         collectionView.dataSource = self
         collectionView.filterDelegate = self
@@ -102,11 +104,17 @@ extension ViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if indexPath.item == 0, let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PreviewCollectionViewCell.reuseID,
+                                                                              for: indexPath) as? PreviewCollectionViewCell {
+            cell.configure()
+            return cell
+        }
+        
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FilterCollectionViewCell.reuseID,
                                                             for: indexPath) as? FilterCollectionViewCell
             else { return UICollectionViewCell() }
 
-        cell.configure(image: data[indexPath.item].image)
+        cell.configure(view: data[indexPath.item].imageV)
         return cell
     }
     
